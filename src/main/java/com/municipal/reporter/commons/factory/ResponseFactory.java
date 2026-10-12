@@ -1,16 +1,12 @@
 package com.municipal.reporter.commons.factory;
 
-import com.municipal.reporter.commons.dto.ApiResponse;
 import com.municipal.reporter.commons.dto.ErrorResponse;
-import com.municipal.reporter.commons.dto.PagedResponse;
+import com.municipal.reporter.commons.dto.GenericResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.net.URI;
-import java.util.List;
-
 /**
- * Factory for creating standardized ResponseEntity instances across PoliMou controllers.
+ * Factory for creating standardized responses across PoliMou controllers and handlers.
  */
 public final class ResponseFactory {
 
@@ -18,65 +14,51 @@ public final class ResponseFactory {
         // Prevent instantiation
     }
 
-    public static <T> ResponseEntity<ApiResponse<T>> ok(T data) {
-        return ResponseEntity.ok(ApiResponse.ok(data));
+    public static <T> ResponseEntity<GenericResponse<T>> ok(T data) {
+        return ResponseEntity.ok(GenericResponse.fromData(data));
     }
 
-    public static <T> ResponseEntity<ApiResponse<T>> ok(String message, T data) {
-        return ResponseEntity.ok(ApiResponse.ok(message, data));
+    public static ResponseEntity<GenericResponse<Void>> ok() {
+        return ResponseEntity.ok(GenericResponse.fromData(null));
     }
 
-    public static ResponseEntity<ApiResponse<Void>> okMessage(String message) {
-        return ResponseEntity.ok(ApiResponse.ok(message, null));
+    public static <T> GenericResponse<T> payload(T data) {
+        return GenericResponse.fromData(data);
     }
 
-    public static <T> ResponseEntity<ApiResponse<T>> created(T data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Resource created successfully", data));
-    }
-
-    public static <T> ResponseEntity<ApiResponse<T>> created(URI location, T data) {
-        return ResponseEntity.created(location).body(ApiResponse.ok("Resource created successfully", data));
-    }
-
-    public static <T> ResponseEntity<ApiResponse<T>> created(String message, T data) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok(message, data));
+    public static <T> ResponseEntity<GenericResponse<T>> created(T data) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(GenericResponse.fromData(data));
     }
 
     public static ResponseEntity<Void> noContent() {
         return ResponseEntity.noContent().build();
     }
 
-    public static <T> ResponseEntity<PagedResponse<T>> paged(List<T> content, int page, int size, long totalElements) {
-        int totalPages = size > 0 ? (int) Math.ceil((double) totalElements / size) : 0;
-        boolean last = page >= totalPages - 1;
-        PagedResponse<T> response = PagedResponse.<T>builder()
-                .content(content)
-                .page(page)
-                .size(size)
-                .totalElements(totalElements)
-                .totalPages(totalPages)
-                .last(last)
-                .build();
-        return ResponseEntity.ok(response);
+    public static <T> ResponseEntity<GenericResponse<T>> error(HttpStatus status, String title, String description, String businessCode) {
+        return ResponseEntity.status(status).body(GenericResponse.error(ErrorResponse.of(title, description, status.value(), businessCode)));
     }
 
-    public static ResponseEntity<ErrorResponse> error(HttpStatus status, String message, String path) {
-        return ResponseEntity.status(status).body(ErrorResponse.of(status.value(), status.getReasonPhrase(), message, path));
+    public static <T> ResponseEntity<GenericResponse<T>> badRequest(String description) {
+        return error(HttpStatus.BAD_REQUEST, "Bad Request", description, "10400");
     }
 
-    public static ResponseEntity<ErrorResponse> badRequest(String message, String path) {
-        return error(HttpStatus.BAD_REQUEST, message, path);
+    public static <T> ResponseEntity<GenericResponse<T>> notFound(String description) {
+        return error(HttpStatus.NOT_FOUND, "Resource Not Found", description, "10404");
     }
 
-    public static ResponseEntity<ErrorResponse> notFound(String message, String path) {
-        return error(HttpStatus.NOT_FOUND, message, path);
+    public static <T> ResponseEntity<GenericResponse<T>> unauthorized(String description) {
+        return error(HttpStatus.UNAUTHORIZED, "Unauthorized", description, "10401");
     }
 
-    public static ResponseEntity<ErrorResponse> unauthorized(String message, String path) {
-        return error(HttpStatus.UNAUTHORIZED, message, path);
+    public static <T> ResponseEntity<GenericResponse<T>> forbidden(String description) {
+        return error(HttpStatus.FORBIDDEN, "Forbidden", description, "10403");
     }
 
-    public static ResponseEntity<ErrorResponse> forbidden(String message, String path) {
-        return error(HttpStatus.FORBIDDEN, message, path);
+    public static <T> ResponseEntity<GenericResponse<T>> business(String description, String businessCode) {
+        return error(HttpStatus.UNPROCESSABLE_ENTITY, "Business Error", description, businessCode != null ? businessCode : "10422");
+    }
+
+    public static <T> ResponseEntity<GenericResponse<T>> internalError(String description) {
+        return error(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", description, "10500");
     }
 }
