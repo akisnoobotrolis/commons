@@ -22,6 +22,7 @@ public final class KafkaEventTypes {
     public static final String ISSUE_COMMENT_ADDED_V1 = "issue_comment_added_v1";
     public static final String ISSUE_STATUS_CHANGED_V1 = "issue_status_changed_v1";
     public static final String ISSUE_PHOTO_UPLOAD_V1 = "issue_photo_upload_v1";
+    public static final String ISSUE_PHOTOS_PROCESSED_V1 = "issue_photos_processed_v1";
 
     // Moderation & NLP Events
     public static final String MODERATION_REQUEST_V1 = "moderation_request_v1";
