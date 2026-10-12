@@ -34,6 +34,14 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <!-- Spring Web for ResponseEntity & Web Utils (provided by consuming Spring Boot services) -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>6.1.13</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Lombok boilerplate reduction -->
         <dependency>
             <groupId>org.projectlombok</groupId>
