@@ -46,6 +46,19 @@ public class GenericResponse<T> {
                 .build();
     }
 
+    public static <T> GenericResponse<T> fromError(String errorMessage) {
+        ErrorDetailsResponse errorDetails = ErrorDetailsResponse.builder()
+                .title("Error")
+                .description(errorMessage)
+                .httpStatus(400)
+                .businessCode("10400")
+                .timestamp(java.time.ZonedDateTime.now())
+                .build();
+        return GenericResponse.<T>builder()
+                .exceptions(ErrorResponse.builder().errors(java.util.List.of(errorDetails)).build())
+                .build();
+    }
+
     public static <T> GenericResponse<T> fromData(T data) {
         return GenericResponse.<T>builder()
                 .data(data)
