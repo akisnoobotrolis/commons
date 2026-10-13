@@ -7,7 +7,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @JsonPropertyOrder({
@@ -52,10 +54,10 @@ public class GenericResponse<T> {
                 .description(errorMessage)
                 .httpStatus(400)
                 .businessCode("10400")
-                .timestamp(java.time.ZonedDateTime.now())
+                .timestamp(ZonedDateTime.now())
                 .build();
         return GenericResponse.<T>builder()
-                .exceptions(ErrorResponse.builder().errors(java.util.List.of(errorDetails)).build())
+                .exceptions(ErrorResponse.builder().errors(List.of(errorDetails)).build())
                 .build();
     }
 

@@ -14,6 +14,7 @@ public final class SecurityHeaders {
     public static final String HEADER_USER_ROLES     = "X-Roles";
     public static final String HEADER_REQ_ID         = "X-Request-Id";
     public static final String HEADER_CORRELATION_ID = "X-Correlation-Id";
+    public static final String HEADER_GATEWAY_TOKEN  = "X-Gateway-Token";
 
     // JWT claim names
     public static final String CLAIM_USER_ID         = "X-User-Id";
